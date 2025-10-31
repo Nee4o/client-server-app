@@ -5,12 +5,24 @@ using BookAPI.Model;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CORSPolicy",
+        builder =>
+        {
+            builder
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .WithOrigins("http://localhost:3000");
+        }
+    );
+});
 
 builder.Services.AddDbContext<Library1Context>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("Default")).UseLazyLoadingProxies());
 
@@ -18,7 +30,6 @@ builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -70,6 +81,8 @@ app.MapDelete("/deleteBook/{id}", async (Library1Context db, int id) =>
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseCors("CORSPolicy");
 
 app.MapControllers();
 
