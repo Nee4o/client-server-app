@@ -6,6 +6,7 @@ export default function UpdateBook(props) {
         title: props.book.title,
         genre: props.book.genre,
         authorId: props.book.authorId
+        
     });
     const [formData, setFormData] = useState(initialFormData);
 
